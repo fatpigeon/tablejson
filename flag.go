@@ -43,22 +43,20 @@ func GetConfig() Config {
 	//从配置文件读取配置
 	if confFile != "" {
 		f, err := ioutil.ReadFile(confFile)
-		if err != nil {
-			panic(err)
-		}
-		if confType == "toml" || strings.HasSuffix(confFile, ".toml") {
-
-			err = toml.Unmarshal(f, &conf)
-			if err != nil {
-				panic(err)
+		if err == nil {
+			if confType == "toml" || strings.HasSuffix(confFile, ".toml") {
+				err = toml.Unmarshal(f, &conf)
+				if err != nil {
+					panic(err)
+				}
+			} else if confType == "json" || strings.HasSuffix(confFile, ".json") {
+				err = json.Unmarshal(f, &conf)
+				if err != nil {
+					panic(err)
+				}
+			} else {
+				fmt.Println("目前不支持这种格式的配置文件")
 			}
-		} else if confType == "json" || strings.HasSuffix(confFile, ".json") {
-			err = json.Unmarshal(f, &conf)
-			if err != nil {
-				panic(err)
-			}
-		} else {
-			fmt.Println("目前不支持这种格式的配置文件")
 		}
 	}
 	//从命令行参数读取配置
