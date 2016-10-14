@@ -6,7 +6,7 @@ tablejson是一个能把html中的table转成json的命令行工具
 
 #### install command
 
-TODO
+go get github.com/fatpigeon/tablejson
 
 ## Usage
 
