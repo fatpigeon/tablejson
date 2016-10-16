@@ -3,17 +3,25 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"golang.org/x/net/html"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
-
-	"golang.org/x/net/html"
 )
 
 type Table struct {
 	Heads []string
 	Bodys [][]string
+}
+
+type TableProcess struct {
+	Col    int
+	Row    int
+	Value  int
+	Re     string
+	target string
 }
 
 func getUrlData(url string) *html.Node {
@@ -200,26 +208,41 @@ func CreateTable(node *html.Node, get GetDataAdapter) Table {
 	return t
 }
 
+func SaveData(data string, output string) {
+	if output != "" {
+		err := ioutil.WriteFile(output, []byte(data), os.ModeDir)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		fmt.Println(data)
+	}
+}
+
 /*
 * 入口函数
 *
  */
-func Portal(url string, file string, mode string) string {
+func Portal(conf Config) string {
 	var node *html.Node
-	if url != "" {
-		node = getUrlData(url)
+	if conf.Url != "" {
+		node = getUrlData(conf.Url)
 	} else {
-		node = getFileData(file)
+		node = getFileData(conf.File)
 	}
 	var adapter GetDataAdapter
-	switch mode {
+	switch conf.Mode {
 	case "text":
 		adapter = GetNodeTextData
 	case "xml":
 		adapter = GetNodeXmlData
 	}
+	//	for _, p := range conf.Process {
+
+	//	}
 	tNodes := findTable(node)
 	tables := []Table{}
+
 	for _, t := range tNodes {
 		tables = append(tables, CreateTable(t, adapter))
 	}

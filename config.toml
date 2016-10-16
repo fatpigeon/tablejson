@@ -2,4 +2,16 @@
 
 url = ""
 file = "_example/example.html"
-mode = "text"
+mode = "xml"
+
+
+#
+[[process]]
+	class = ""
+	index = 2
+   	col = 2
+   	value = ".Attr.src"
+	[process.replace]
+		target = "$1"
+		re = "([\\d]*).png$"
+	
